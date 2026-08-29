@@ -8,7 +8,7 @@ rendements du GIPS sur l'exemple chiffré officiel du Handbook. *English summary
 ## En bref
 
 1. **Les quatre chaînages racontent la même histoire.** Sur 274 mois d'un portefeuille
-   tactique contre sa politique (+58,74 points d'écart actif cumulé), Cariño, Menchero,
+   tactique contre sa politique (+58,74 points de pourcentage d'écart actif cumulé), Cariño, Menchero,
    GRAP et Frongello attribuent l'allocation entre +16,11 et +16,93 points et la sélection
    entre +41,01 et +41,79 : au plus 0,83 point d'écart entre méthodes, soit 1,4 % du total
    à expliquer. Le choix de la méthode est un choix de présentation, pas de verdict.
@@ -71,7 +71,7 @@ GRAP (1997) capitalise le passé au portefeuille et le futur au benchmark ; Fron
 (2002) par une récursion qui porte l'histoire des effets déjà ajustés. Les formules sont
 recoupées contre l'implémentation de référence R-Finance/PortfolioAttribution (MIT).
 
-| Effet total chaîné (pt) | Cariño | Menchero | GRAP | Frongello |
+| Effet total chaîné (points de pourcentage) | Cariño | Menchero | GRAP | Frongello |
 |---|---|---|---|---|
 | Allocation | +16,38 | +16,93 | +16,11 | +16,11 |
 | Sélection | +41,58 | +41,01 | +41,79 | +41,79 |
@@ -93,9 +93,15 @@ réconcilie (testé).
 
 ![Quatre méthodes](results/figures/quatre_methodes.png)
 
-**Comment lire cette figure.** Une barre par méthode et par effet. Si les quatre barres
-d'un groupe avaient des hauteurs visiblement différentes, le choix de la méthode
-changerait le message au comité ; elles sont presque confondues.
+**Comment lire cette figure.** Une barre par méthode et par effet, non pas en niveau mais
+en ÉCART À LA MOYENNE des quatre méthodes, en points de base. Les niveaux, de 16 à 42
+points de pourcentage, écrasaient des différences qui valent au plus 83 points de base :
+tracés en écart, ils deviennent lisibles, et deux faits sautent aux yeux. Les barres GRAP
+et Frongello sont rigoureusement identiques, ce qui est l'identité redémontrée plus haut ;
+Menchero est la seule méthode qui s'écarte, de +55 points de base sur l'allocation et de
+-53 sur la sélection, l'un compensant l'autre puisque les totaux sont contraints. Sur un
+écart actif cumulé de 5 874 points de base, le choix de la méthode ne change donc pas le
+message au comité.
 
 ![Attribution chaînée](results/figures/attribution_chainee.png)
 
@@ -103,7 +109,11 @@ changerait le message au comité ; elles sont presque confondues.
 sélection (jaune) fait le gros du travail et accélère après 2020 ; l'allocation (bleu)
 donne et reprend (elle perd 17 points entre 2018 et 2021 : surpondérer la classe
 momentum a coûté cher dans les retournements) ; l'interaction reste marginale. La somme
-(tirets) retombe exactement sur l'écart actif de la figure précédente.
+(tirets) retombe exactement sur l'écart actif de la figure précédente AU DERNIER MOIS, et
+sur lui seul : le coefficient GRAP du mois i contient les rendements postérieurs à i, si
+bien qu'une somme partielle n'est pas l'attribution arrêtée à cette date. Lire la courbe
+en tirets comme l'écart actif courant serait une erreur ; c'est la propriété de tous les
+chaînages de la famille dollar.
 
 ## Volet 3 : TWR, Dietz modifié, MWR, validés sur l'exemple officiel
 

@@ -57,12 +57,12 @@ def attribute(out: Path = Path("results")) -> None:
     spread.round(2).to_csv(tables / "ecart_entre_methodes_pb.csv")
 
     figures.fig_active(monthly, figs / "actif.png")
-    figures.fig_linked(linked["grap"], actif_cum, "GRAP", figs / "attribution_chainee.png")
+    figures.fig_linked(linked["grap"], actif_cum, figures.NOMS_CHAINAGES["grap"], figs / "attribution_chainee.png")
     figures.fig_methods(totaux, actif_cum, figs / "quatre_methodes.png")
 
     typer.echo(f"{len(monthly)} mois ; écart actif cumulé {actif_cum * 100:+.2f} pt ; "
                f"résidu max de réconciliation {max(abs(v) for v in residus.values()):.2e}")
-    typer.echo("totaux chaînés (pt) :")
+    typer.echo("totaux chaînés (points de pourcentage) :")
     typer.echo((totaux * 100).round(3).to_string())
     typer.echo(f"écart max entre méthodes : {float(spread.max()):.1f} pb "
                f"({spread.idxmax()})")

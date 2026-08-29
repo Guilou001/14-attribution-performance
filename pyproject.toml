@@ -26,7 +26,7 @@ dev = ["pytest>=8", "ruff>=0.6"]
 perf = "perf.cli:app"
 
 [project.urls]
-Repository = "https://github.com/Guilou001/14-performance-lab-ca"
+Repository = "https://github.com/Guilou001/14-attribution-performance"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/perf"]

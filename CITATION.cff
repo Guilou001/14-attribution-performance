@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "Pour citer ce dépôt, utilisez les métadonnées ci-dessous."
+title: "performance-lab-ca : quatre chaînages d'attribution réconciliés à 1e-12, GIPS validé au centième"
+authors:
+  - family-names: "Vaudescal"
+    given-names: "Guillaume"
+repository-code: "https://github.com/Guilou001/14-performance-lab-ca"
+license: MIT
+date-released: "2026-08-29"

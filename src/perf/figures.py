@@ -40,10 +40,10 @@ def fig_active(monthly: pd.DataFrame, dest: Path) -> None:
     ax.yaxis.set_major_formatter(fr)
     ax.legend(fontsize=9, loc="upper left")
     ax.set_title("Le portefeuille tactique et sa politique : l'écart entre les deux est la matière à attribuer")
-    actif = (wp / wb - 1) * 100
+    actif = wp - wb                          # en points de 100 $ : la cible de l'attribution
     ax2.plot(actif.index, actif, color=OKABE_ITO[2])
     ax2.axhline(0, color="0.4", linewidth=0.8)
-    ax2.set_ylabel("Écart actif cumulé (%)", fontsize=9.5)
+    ax2.set_ylabel("Écart actif cumulé (points de 100 $)", fontsize=9.5)
     ax2.yaxis.set_major_formatter(fr)
     fig.savefig(dest)
     plt.close(fig)

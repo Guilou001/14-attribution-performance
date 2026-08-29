@@ -36,13 +36,18 @@ def menchero(effects: pd.DataFrame, rp: pd.Series, rb: pd.Series) -> pd.DataFram
     """Chaînage optimisé de Menchero (2000) : coefficient commun M plus correctif alpha_t."""
     rpc, rbc = _cum(rp.to_numpy()), _cum(rb.to_numpy())
     t = len(rp)
+    diff = rp - rb
     if rpc == rbc:
+        # limite : M = (1+R)^((T-1)/T) ; le correctif reste NÉCESSAIRE si les chemins
+        # diffèrent (la référence R met alpha = 0 et ne réconcilie plus, défaut corrigé ici)
         m = (1.0 + rbc) ** ((t - 1) / t)
-        alpha = pd.Series(0.0, index=rp.index)
     else:
         m = ((rpc - rbc) / t) / ((1.0 + rpc) ** (1.0 / t) - (1.0 + rbc) ** (1.0 / t))
-        diff = rp - rb
-        alpha = (rpc - rbc - m * diff.sum()) * diff / float((diff**2).sum())
+    ss = float((diff**2).sum())
+    if ss > 0.0:
+        alpha = (rpc - rbc - m * diff.sum()) * diff / ss
+    else:
+        alpha = pd.Series(0.0, index=rp.index)
     return effects.mul(m + alpha, axis=0)
 
 

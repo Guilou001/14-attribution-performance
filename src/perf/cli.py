@@ -78,11 +78,15 @@ def gips(out: Path = Path("results")) -> None:
     vb, ve = 100_000.0, 135_000.0
     flows = [(6.0, -2_000.0), (11.0, 20_000.0)]
     dietz = modified_dietz(vb, ve, flows, 30.0)
-    twr = twr_chain([0.0706, 0.08])
+    # le TWR revalorise au grand flux (jour 11, valeur 125 000 $ APRÈS l'apport) : la
+    # sous-période 1 est elle-même un Dietz (7 000/99 091, le Handbook l'imprime), la 2 vaut 8 %
+    sp1 = modified_dietz(100_000.0, 125_000.0, flows, 11.0)
+    twr = twr_chain([sp1, 0.08])
     mwr = mwr_irr(vb, ve, flows, 30.0)
     table = pd.DataFrame([
         {"mesure": "Dietz modifié", "valeur_pct": dietz * 100, "handbook": 15.31},
-        {"mesure": "TWR (sous-périodes 7,06 % et 8,00 %)", "valeur_pct": twr * 100, "handbook": 15.63},
+        {"mesure": "sous-période 1 (Dietz au jour 11)", "valeur_pct": sp1 * 100, "handbook": 7.06},
+        {"mesure": "TWR (chaînage des deux sous-périodes)", "valeur_pct": twr * 100, "handbook": 15.63},
         {"mesure": "MWR (taux interne du mois)", "valeur_pct": mwr * 100, "handbook": float("nan")},
     ])
     (out / "tables").mkdir(parents=True, exist_ok=True)

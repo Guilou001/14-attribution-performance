@@ -13,10 +13,12 @@ rendements du GIPS sur l'exemple chiffré officiel du Handbook. *English summary
    entre +41,01 et +41,79 : au plus 0,83 point d'écart entre méthodes, soit 1,4 % du total
    à expliquer. Le choix de la méthode est un choix de présentation, pas de verdict.
    (Mesuré.)
-2. **GRAP et Frongello ont des totaux EXACTEMENT égaux, et c'est un théorème.** En
-   développant la récursion de Frongello, le coefficient total de l'effet du mois t vaut
-   le facteur GRAP (le passé au portefeuille, le futur au benchmark) : les chemins mensuels
-   diffèrent, les totaux coïncident à 1e-12 (testé). (Mesuré et démontré.)
+2. **GRAP et Frongello ont des totaux EXACTEMENT égaux, une identité redémontrée et
+   testée ici.** En développant la récursion de Frongello, le coefficient total de l'effet
+   du mois t vaut le facteur GRAP (le passé au portefeuille, le futur au benchmark) : les
+   chemins mensuels diffèrent, les totaux coïncident à 1e-12 (testé). L'identité est
+   absente des deux papiers originaux mais connue de la littérature de synthèse (la
+   « famille dollar » de Cariño 2002 ; Bacon 2019, rapporté). (Mesuré et démontré.)
 3. **Chaque méthode réconcilie exactement, ou le test échoue.** La somme des effets
    chaînés doit égaler (1+Rp_1)...(1+Rp_T) - (1+Rb_1)...(1+Rb_T) : résidu maximal observé
    4,8e-15. Et les trois rendements réglementaires (TWR, Dietz modifié, MWR) retombent sur
@@ -40,7 +42,9 @@ jamais commités), 274 mois de novembre 2003 à août 2026. La politique : 65 % 
 tactique s'en écarte par une règle déclarée de momentum 12-1 (le rendement cumulé des
 mois t-12 à t-2, calculé au début du mois : rien du mois attribué n'entre dans les
 poids) : +5 points à la classe gagnante (matière à ALLOCATION), +10 points de poids de
-classe au FNB gagnant dans chaque classe (matière à SÉLECTION). Résultat brut : 7,54 %
+classe au FNB gagnant dans chaque classe (matière à SÉLECTION), le transfert plafonné au
+poids du FNB perdant pour ne jamais créer de poids négatif (7,69 points quand XRE est le
+perdant, le cas dans 92 mois sur 274, mesuré). Résultat brut : 7,54 %
 par an contre 6,99 % pour la politique, +0,56 point par an AVANT tout coût de
 transaction (déclaré ; la règle tourne chaque mois, les coûts mangeraient une partie).
 
@@ -78,9 +82,14 @@ recoupées contre l'implémentation de référence R-Finance/PortfolioAttributio
 table `residus_reconciliation.csv`) ; le verdict, lui, ne dépend pas de la méthode : la
 sélection intra-classe explique 70 % de la valeur ajoutée quel que soit le chaînage, et
 l'écart maximal entre méthodes (0,83 point, sur l'allocation) vaut 1,4 % du total à
-expliquer. Les colonnes GRAP et Frongello sont identiques ligne à ligne : c'est le
-théorème du dépôt (test `test_frongello_totals_equal_grap_totals_theorem`), une identité
-algébrique que les deux papiers ne signalent pas l'un pour l'autre.
+expliquer. Les colonnes GRAP et Frongello sont identiques ligne à ligne : l'identité de
+la « famille dollar » (Cariño 2002 ; Bacon 2019, rapporté), redémontrée ici par expansion
+de la récursion et testée à 1e-12 (test `test_frongello_totals_equal_grap_totals_theorem`) ;
+les deux papiers originaux ne la signalent pas l'un pour l'autre (vérifié sur les PDF).
+Détail d'implémentation qui compte : dans le cas limite où les cumuls du portefeuille et
+du benchmark coïncident exactement par des chemins différents, l'implémentation R de
+référence perd la réconciliation (alpha forcé à zéro) ; la nôtre garde le correctif et
+réconcilie (testé).
 
 ![Quatre méthodes](results/figures/quatre_methodes.png)
 
@@ -111,14 +120,17 @@ jour 6, apport de 20 000 $ au jour 11, valeur finale 135 000 $, mois de 30 jours
 | Mesure | Notre moteur | Handbook |
 |---|---|---|
 | Dietz modifié | 15,306 % | 15,31 % |
-| TWR (sous-périodes 7,06 % et 8,00 %) | 15,625 % | 15,63 % |
+| Sous-période 1 (Dietz revalorisé au jour 11) | 7,064 % | 7,06 % |
+| TWR (chaînage des deux sous-périodes) | 15,629 % | 15,63 % |
 | MWR (taux interne du mois) | 15,349 % | non imprimé |
 
 **Lecture guidée.** Le Dietz au denominateur : 100 000 - 2 000 x 24/30 + 20 000 x 19/30
-= 111 067 $ ; gain de 17 000 $ ; 15,31 %. Le TWR enchaîne les deux sous-périodes
-revalorisées du Handbook (l'écart au 15,63 imprimé vient de leurs décimales non
-publiées, déclaré). Le MWR tombe entre les deux : l'apport de 20 000 $ est arrivé avant
-la bonne sous-période, le client a fait un peu mieux que le Dietz ne le dit.
+= 111 067 $ ; gain de 17 000 $ ; 15,31 %. Le TWR revalorise au grand flux : la
+sous-période 1 est elle-même un Dietz (7 000/99 091 = 7,0642 %, le Handbook imprime ce
+calcul p. 104), la seconde vaut 8,00 %, et le chaînage retombe exactement sur le 15,63 %
+imprimé : les trois lignes sortent du MÊME moteur, aucun chiffre recopié. Le MWR tombe
+entre les deux : l'apport de 20 000 $ est arrivé avant la bonne sous-période, le client a
+fait un peu mieux que le Dietz ne le dit.
 
 ## Reproduire
 
@@ -139,11 +151,14 @@ uv run perf gips        # l'exemple du Handbook refait par les trois moteurs
 2. **Deux niveaux, six actifs.** L'attribution réelle d'une caisse porte des dizaines de
    classes, des devises et des dérivés ; l'effet devise (Karnosky-Singer) n'est pas
    traité, déclaré comme suite naturelle avec le dépôt 13.
-3. **Les tables du papier de Frongello (JPM 2002) ne sont pas répliquées** : le site qui
-   l'héberge a un certificat expiré ; la contre-vérification passe par l'implémentation
-   R de référence et par les identités exactes. (Déclaré ; le papier GRAP original de
-   1997 est introuvable en libre, statut non trouvé, la formule vient de la référence R
-   et de Bacon.)
+3. **Les tables du papier de Frongello (JPM printemps 2002) ont été répliquées lors de
+   la contre-vérification adversariale** : ses figures 3 à 8 (périodes identiques,
+   uniques, gros rendements, ordre inversé) sont reproduites par `linking.py` au
+   dix-millième imprimé, ordre-dépendance de Frongello et invariance de Cariño et
+   Menchero comprises (rapporté, journal de vérification du dépôt ; le site source a un
+   certificat expiré, la réplication n'est pas dans la CI). Le papier GRAP original de
+   1997 reste introuvable en libre (non trouvé) ; la formule vient de la référence R et
+   de Bacon.
 4. **Le Handbook n'imprime pas le MWR de son propre exemple** : notre 15,35 % est calculé
    par le moteur testé sur formes fermées, pas recopié. (Mesuré.)
 5. **Aucune prétention de conformité GIPS.** GIPS est une marque de CFA Institute ; ce
@@ -160,8 +175,12 @@ uv run perf gips        # l'exemple du Handbook refait par les trois moteurs
   *Journal of Performance Measurement*.
 - Frongello, A. (2002), « Linking single period attribution results », *Journal of
   Performance Measurement* ; comparatif JPM printemps 2002.
-- GRAP (1997), Groupe de Réflexion en Attribution de Performance, Paris (non trouvé en
-  libre ; formule via R-Finance/PortfolioAttribution et Bacon 2008).
+- GRAP (1997), Groupe de Recherche en Attribution de Performance, Paris (expansion selon
+  Bacon 2019 ; « Réflexion » circule aussi ; document original non trouvé en libre ;
+  formule via R-Finance/PortfolioAttribution et Bacon).
+- Cariño, D. (2002), « Refinements in multi-period attribution », *Journal of Performance
+  Measurement* ; Bacon, C. (2019), *Performance Attribution*, CFA Institute Research
+  Foundation : la « famille dollar » et l'égalité des totaux.
 - CFA Institute (2020), *GIPS Standards Handbook for Firms*, exemples p. 103-105.
 - R-Finance/PortfolioAttribution (MIT) : implémentation de référence des chaînages.
 
@@ -176,8 +195,9 @@ observed residual 4.8e-15). Test bench: a declared 12-1 momentum tilt portfolio 
 repo-03 65/35 policy, 274 months (2003-11 to 2026-08), +58.74 pts cumulative active
 return (+0.56 pt/yr, BEFORE costs, declared). Verdict: the four methods agree, at most
 0.83 pt apart (1.4 % of the total); selection explains ~70 % under every linking; and
-GRAP and Frongello produce IDENTICAL totals, which we show is an algebraic theorem
-(expanding Frongello's recursion yields the GRAP factors) and test to 1e-12. GIPS-style
+GRAP and Frongello produce IDENTICAL totals, an identity of the "dollar family"
+(Cariño 2002; Bacon 2019, reported) absent from the two original papers, re-derived here
+(expanding Frongello's recursion yields the GRAP factors) and tested to 1e-12. GIPS-style
 returns (TWR, Modified Dietz, MWR) are validated to the cent on the official GIPS
 Standards Handbook 2020 worked example (pp. 103-105): 15.31 % and 15.63 %. No GIPS
 compliance claimed; 12 closed-form tests, no network.

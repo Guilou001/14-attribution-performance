@@ -71,9 +71,25 @@ def test_modified_dietz_gips_handbook_example():
 
 
 def test_twr_chain_gips_handbook_example():
-    # les deux sous-périodes revalorisées du même exemple : 7,06 % puis 8,00 %
-    assert twr_chain([0.0706, 0.08]) == pytest.approx(1.0706 * 1.08 - 1.0, abs=1e-15)
-    assert twr_chain([0.0706, 0.08]) * 100 == pytest.approx(15.62, abs=0.01)
+    # la sous-période 1 est un Dietz revalorisé au grand flux : 7 000/99 091 (Handbook p. 104)
+    flows = [(6.0, -2_000.0), (11.0, 20_000.0)]
+    sp1 = modified_dietz(100_000.0, 125_000.0, flows, 11.0)
+    assert sp1 * 100 == pytest.approx(7.0642, abs=0.001)
+    assert twr_chain([sp1, 0.08]) * 100 == pytest.approx(15.63, abs=0.005)
+
+
+def test_menchero_reconciles_when_cumulative_returns_tie_by_different_paths():
+    # Pi(1+rp) = Pi(1+rb) exactement mais par des chemins différents : la référence R met
+    # alpha = 0 et ne réconcilie plus ; notre branche limite garde le correctif
+    from perf.linking import menchero
+
+    mois = pd.period_range("2020-01", periods=2, freq="M")
+    rp = pd.Series([1.0, -0.5], index=mois)                  # (2)(0,5) = 1 : cumul nul
+    rb = pd.Series([0.0, 0.0], index=mois)
+    eff = pd.DataFrame({"allocation": rp - rb, "selection": [0.0, 0.0],
+                        "interaction": [0.0, 0.0]}, index=mois)
+    linked = menchero(eff, rp, rb)
+    assert float(linked.to_numpy().sum()) == pytest.approx(0.0, abs=1e-12)
 
 
 def test_mwr_closed_forms():

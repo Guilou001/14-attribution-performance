@@ -7,8 +7,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from gvf.style import OKABE_ITO, appliquer, formateur  # noqa: F401
 
-OKABE_ITO = ["#0072B2", "#E69F00", "#009E73", "#D55E00", "#CC79A7", "#56B4E9", "#F0E442", "#000000"]
+# La palette et les réglages viennent de la couche partagée du portefeuille : les mêmes
+# couleurs et la même virgule décimale dans tous les dépôts, corrigées à un seul endroit.
 
 # les clés internes des colonnes ne sont pas des libellés de lecture : chaque chaînage porte le nom
 # de son auteur et l'année de sa publication, comme dans la bibliographie du README
@@ -18,18 +20,9 @@ NOMS_CHAINAGES = {"carino": "Cariño (1999)", "menchero": "Menchero (2000)",
 
 
 def use_style():
-    import matplotlib as mpl
-    from cycler import cycler
-    from matplotlib.ticker import FuncFormatter
-
-    mpl.rcParams.update({
-        "figure.dpi": 200, "savefig.dpi": 200, "figure.constrained_layout.use": True,
-        "font.size": 11, "axes.titlesize": 12, "axes.prop_cycle": cycler(color=OKABE_ITO),
-        "axes.spines.top": False, "axes.spines.right": False,
-        "axes.grid": True, "grid.alpha": 0.3, "grid.linewidth": 0.5,
-        "legend.frameon": False, "lines.linewidth": 1.7,
-    })
-    return FuncFormatter(lambda v, _: f"{v:g}".replace(".", ","))
+    """Les réglages communs, puis le formateur d'axe en français."""
+    appliquer()
+    return formateur()
 
 
 def fig_active(monthly: pd.DataFrame, dest: Path) -> None:

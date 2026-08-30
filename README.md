@@ -5,6 +5,8 @@ Ce dépôt implémente les quatre méthodes de chaînage qui réconcilient l'att
 multi-périodes, exige la réconciliation à 1e-12 près par test, et valide les trois
 rendements du GIPS sur l'exemple chiffré officiel du Handbook. *English summary below.*
 
+Le même contenu en PDF : [rapport/rapport.pdf](rapport/rapport.pdf).
+
 ## En bref
 
 1. **Les quatre chaînages racontent la même histoire.** Sur 274 mois d'un portefeuille

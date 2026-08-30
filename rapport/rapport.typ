@@ -39,6 +39,8 @@
 
 Les effets de Brinson d'un mois s'additionnent exactement ; ceux de vingt-trois ans, non. Ce dépôt implémente les quatre méthodes de chaînage qui réconcilient l'attribution multi-périodes, exige la réconciliation à 1e-12 près par test, et valide les trois rendements du GIPS sur l'exemple chiffré officiel du Handbook. _English summary below._
 
+Le même contenu en PDF : #link("rapport/rapport.pdf")[rapport/rapport.pdf].
+
 == En bref
 
 + *Les quatre chaînages racontent la même histoire.* Sur 274 mois d'un portefeuille tactique contre sa politique (+58,74 points de pourcentage d'écart actif cumulé), Cariño, Menchero, GRAP et Frongello attribuent l'allocation entre +16,11 et +16,93 points et la sélection entre +41,01 et +41,79 : au plus 0,83 point d'écart entre méthodes, soit 1,4 % du total à expliquer. Le choix de la méthode est un choix de présentation, pas de verdict. (Mesuré.)

@@ -1,13 +1,15 @@
-# L'attribution de performance qui tombe juste : quatre chaînages, un exemple GIPS, zéro pouce
+# Expliquer un écart de performance sur plusieurs années
 
-Les effets de Brinson d'un mois s'additionnent exactement ; ceux de vingt-trois ans, non.
-Ce dépôt implémente les quatre méthodes de chaînage qui réconcilient l'attribution
-multi-périodes, exige la réconciliation à 1e-12 près par test, et valide les trois
-rendements du GIPS sur l'exemple chiffré officiel du Handbook. *English summary below.*
+Un portefeuille peut battre son indice grâce au choix des catégories d'actifs ou au choix des titres à l'intérieur de chaque catégorie. Sur un seul mois, ces contributions s'additionnent directement. Sur plusieurs années, la composition des rendements empêche toutefois de les additionner sans ajustement.
+
+Le présent projet compare quatre méthodes qui relient les contributions mensuelles à l'écart de rendement cumulé. Il vérifie également trois mesures de rendement sur l'exemple officiel des normes internationales de présentation de la performance.
+
+**Résultat principal.** Sur 274 mois, le portefeuille étudié dépasse sa politique de 58,74 points de pourcentage. Les quatre méthodes attribuent entre 16,11 et 16,93 points au choix des catégories et entre 41,01 et 41,79 points au choix des titres. L'écart maximal entre les méthodes vaut donc 0,83 point, soit 1,4 % du total à expliquer. De plus, chaque méthode se réconcilie avec le rendement observé à une précision meilleure que 4,8 × 10⁻¹⁵.
+
+Afin de montrer d'où vient cette réconciliation, nous présenterons d'abord l'attribution sur une seule période. Dans un deuxième temps, nous expliquerons pourquoi les effets mensuels ne peuvent pas être simplement additionnés. Ensuite, nous comparerons Cariño, Menchero, GRAP et Frongello, puis nous vérifierons les rendements réglementaires. Enfin, nous présenterons les cas particuliers, les limites et les commandes de reproduction.
 
 Le même contenu en PDF : [rapport/rapport.pdf](rapport/rapport.pdf).
-
-## En bref
+## Les résultats en détail
 
 1. **Les quatre chaînages racontent la même histoire.** Sur 274 mois d'un portefeuille
    tactique contre sa politique (+58,74 points de pourcentage d'écart actif cumulé), Cariño, Menchero,
@@ -17,7 +19,7 @@ Le même contenu en PDF : [rapport/rapport.pdf](rapport/rapport.pdf).
    (Mesuré.)
 2. **GRAP et Frongello ont des totaux EXACTEMENT égaux, une identité redémontrée et
    testée ici.** En développant la récursion de Frongello, le coefficient total de l'effet
-   du mois t vaut le facteur GRAP (le passé au portefeuille, le futur au benchmark) : les
+   du mois t vaut le facteur GRAP (le passé au portefeuille, le futur au portefeuille de référence) : les
    chemins mensuels diffèrent, les totaux coïncident à 1e-12 (testé). L'identité est
    absente des deux papiers originaux mais connue de la littérature de synthèse (la
    « famille dollar » de Cariño 2002 ; Bacon 2019, rapporté). (Mesuré et démontré.)
@@ -53,8 +55,8 @@ transaction (déclaré ; la règle tourne chaque mois, les coûts mangeraient un
 ## Volet 1 : Brinson-Fachler, l'identité de départ
 
 L'attribution de Brinson et Fachler (1985) découpe l'écart actif d'UNE période en trois :
-l'allocation, récompense d'avoir surpondéré une classe qui bat le benchmark total ; la
-sélection, récompense d'avoir mieux fait que le benchmark dans la classe ; l'interaction,
+l'allocation, récompense d'avoir surpondéré une classe qui bat le portefeuille de référence total ; la
+sélection, récompense d'avoir mieux fait que le portefeuille de référence dans la classe ; l'interaction,
 le croisement des deux. La somme des trois, sommée sur les classes, égale Rp - Rb du mois,
 exactement (testé à 1e-14 sur panels aléatoires).
 
@@ -69,7 +71,7 @@ C'est ce trait vert que l'attribution doit expliquer morceau par morceau.
 Chaque méthode multiplie l'effet du mois t par un coefficient qui force la somme totale
 à retomber sur l'écart actif cumulé. Cariño (1999) passe par les logarithmes ; Menchero
 (2000) par un coefficient commun plus un correctif proportionnel à l'écart du mois ;
-GRAP (1997) capitalise le passé au portefeuille et le futur au benchmark ; Frongello
+GRAP (1997) capitalise le passé au portefeuille et le futur au portefeuille de référence ; Frongello
 (2002) par une récursion qui porte l'histoire des effets déjà ajustés. Les formules sont
 recoupées contre l'implémentation de référence R-Finance/PortfolioAttribution (MIT).
 
@@ -89,7 +91,7 @@ la « famille dollar » (Cariño 2002 ; Bacon 2019, rapporté), redémontrée ic
 de la récursion et testée à 1e-12 (test `test_frongello_totals_equal_grap_totals_theorem`) ;
 les deux papiers originaux ne la signalent pas l'un pour l'autre (vérifié sur les PDF).
 Détail d'implémentation qui compte : dans le cas limite où les cumuls du portefeuille et
-du benchmark coïncident exactement par des chemins différents, l'implémentation R de
+du portefeuille de référence coïncident exactement par des chemins différents, l'implémentation R de
 référence perd la réconciliation (alpha forcé à zéro) ; la nôtre garde le correctif et
 réconcilie (testé).
 
